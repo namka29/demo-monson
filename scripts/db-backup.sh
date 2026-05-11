@@ -11,6 +11,6 @@ STAMP="$(date +%Y%m%d_%H%M%S)"
 OUTPUT_FILE="$BACKUP_DIR/db_${STAMP}.sql"
 
 echo "Creating database backup: $OUTPUT_FILE"
-docker compose exec -T mysql sh -lc 'exec mysqldump --single-transaction --quick --set-gtid-purged=OFF --no-tablespaces -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' > "$OUTPUT_FILE"
+docker compose exec -T mariadb sh -lc 'exec mysqldump --single-transaction --quick --no-tablespaces -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' > "$OUTPUT_FILE"
 
 echo "Backup completed: $OUTPUT_FILE"

@@ -2,8 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "Requires MySQL running (match DB_* in .env). Example: docker compose up -d mysql"
-echo "For full Docker (nginx + php + mysql): ./scripts/docker-setup.sh"
+echo "Requires MariaDB/MySQL running (match DB_* in .env). Example: docker compose up -d mariadb"
+echo "For full Docker (nginx + php + MariaDB): ./scripts/docker-setup.sh"
 echo "==> Composer install"
 composer install --no-interaction
 

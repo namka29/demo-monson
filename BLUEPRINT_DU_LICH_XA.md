@@ -8,7 +8,7 @@ Tài liệu tóm tắt yêu cầu (trích từ blueprint Laravel du lịch xã) 
 |------------|-----------|
 | Framework / view | Laravel (Blade) |
 | Admin | Filament Admin |
-| Cơ sở dữ liệu | MySQL |
+| Cơ sở dữ liệu | MariaDB 10.5 (Docker); Laravel `DB_CONNECTION=mysql` (driver tương thích MariaDB) |
 | Bản đồ | Google Maps |
 | Lưu trữ file | Local |
 
@@ -76,7 +76,7 @@ Các kênh sau **bổ sung** cho cổng thông tin du lịch cấp xã, bố c�
 
 ## 7. Phạm vi triển khai (checklist tổng)
 
-- [x] **Công việc 1** — Laravel 12 skeleton, `.env.example` ưu tiên MySQL, storage local (`FILESYSTEM_DISK=local`), `filament/filament` trong `composer.json`, và **Docker** (nginx + PHP-FPM + MySQL): `Dockerfile`, `compose.yml`, `.env.docker`, `scripts/docker-setup.sh` (chi tiết §8).
+- [x] **Công việc 1** — Laravel 12 skeleton, `.env.example` ưu tiên MariaDB/MySQL, storage local (`FILESYSTEM_DISK=local`), `filament/filament` trong `composer.json`, và **Docker** (nginx + PHP-FPM + MariaDB 10.5): `Dockerfile`, `compose.yml`, `.env.docker`, `scripts/docker-setup.sh` (chi tiết §8).
 - [x] CRUD & Filament cho **Destination**, **Event**, **Post**, **Page**, **User** (theo policy Admin / Editor) — chi tiết tiến độ: `PROGRESS.md`.
 - [x] Frontend Blade — trang chủ, `/diem-den`, `/su-kien`, `/tin-tuc`, `/trang/{slug}`; redirect URL cũ; preview bản nháp; sanitize HTML (Purify).
 - [x] Bản đồ điểm đến — `TouristMaps` + tuỳ chọn Leaflet/OSM (`TOURISM_MAPS_DRIVER`).
@@ -88,8 +88,8 @@ Các kênh sau **bổ sung** cho cổng thông tin du lịch cấp xã, bố c�
 
 - Laravel 12 (skeleton), Blade + Vite + Tailwind 4.
 - **Filament** trong `composer.json` (`filament/filament` `^5.0`).
-- **`.env.example`**: MySQL local / dev; **`.env.docker`**: giá trị phù hợp trong stack Docker (`DB_HOST=mysql`, …).
-- **Docker**: `Dockerfile` (PHP 8.3-FPM), `docker/nginx/default.conf`, `compose.yml` (**nginx** cổng `:8080` → **app**, **mysql**), `.dockerignore`, volume Composer (`tourist_vendor`) và npm (`tourist_node_modules`) để `vendor`/node không ghi đè bind mount một cách hỗn loạn.
+- **`.env.example`**: MariaDB/MySQL local / dev; **`.env.docker`**: stack Docker (`DB_HOST=mariadb`, …).
+- **Docker**: `Dockerfile` (PHP 8.3-FPM), `docker/nginx/default.conf`, `compose.yml` (**nginx** cổng `:8080` → **app**, **mariadb**), `.dockerignore`, volume Composer (`tourist_vendor`) và npm (`tourist_node_modules`) để `vendor`/node không ghi đè bind mount một cách hỗn loạn.
 
 ### Cách A — Docker (khuyến nghị nếu máy chỉ có Docker)
 
@@ -99,7 +99,7 @@ Yêu cầu **Docker Compose v2**.
 
    Hoặc từng bước: `docker compose build app` → `docker compose up -d` → (nếu chưa có `.env`) `cp .env.docker .env` → `docker compose exec app php artisan key:generate` → `docker compose exec app php artisan migrate` → `docker compose exec app php artisan filament:install --panels` → `docker compose --profile node run --rm node sh -lc "npm install && npm run build"`.
 
-2. Mở ứng dụng **http://localhost:8080** (đổi cổng: biến môi trường `APP_PORT` khi `docker compose up`). MySQL có thể truy cập từ host qua **`localhost:3306`** (đổi `MYSQL_PUBLISH_PORT` nếu trùng cổng MySQL của máy).
+2. Mở ứng dụng **http://localhost:8080** (đổi cổng: biến môi trường `APP_PORT` khi `docker compose up`). MariaDB map ra máy host mặc định **`localhost:3307`** (`MYSQL_PUBLISH_PORT` trong `.env` / `compose.yml` — tránh trùng dịch vụ đã chiếm `:3306`).
 
 3. **Profile `node`**: chỉ dùng khi cần chạy npm (build hoặc cài deps), ví dụ `docker compose --profile node run --rm node npm run dev`.
 
@@ -132,7 +132,7 @@ macOS mặc định dùng **zsh**: thêm cùng dòng **`export PATH=...`** vào 
 
 ### Cách B — Không Docker (PHP + Composer trực tiếp trên máy)
 
-1. `docker compose up -d mysql` *chỉ* MySQL *(hoặc MySQL của bạn; chỉnh `DB_*` trong `.env`)*
+1. `docker compose up -d mariadb` *chỉ* MariaDB *(hoặc DB của bạn; chỉnh `DB_*` trong `.env`)*
 2. `./scripts/bootstrap-step1.sh`
 
 Hoặc tay: `composer install` → copy `.env.example` → `php artisan key:generate` → `php artisan migrate` → `php artisan filament:install --panels` → `npm install && npm run build` → `php artisan serve`.

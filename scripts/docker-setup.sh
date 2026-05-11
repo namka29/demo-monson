@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start the Docker stack (nginx + php-fpm + mysql), run migrations, Filament, and Vite build.
+# Start the Docker stack (nginx + php-fpm + MariaDB 10.5), run migrations, Filament, and Vite build.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -39,14 +39,14 @@ docker compose up -d
 
 echo "→ APP_KEY (only if .env has no key yet)"
 if ! grep -qE '^APP_KEY=base64:' .env; then
-  docker compose exec -T app php artisan key:generate --ansi
+  docker compose exec -w /var/www/html -T app php artisan key:generate --ansi
 fi
 
 echo "→ Migrate"
-docker compose exec -T app php artisan migrate --force
+docker compose exec -w /var/www/html -T app php artisan migrate --force
 
 echo "→ Filament (safe to ignore errors if already installed)"
-docker compose exec -T app php artisan filament:install --panels --no-interaction || true
+docker compose exec -w /var/www/html -T app php artisan filament:install --panels --no-interaction || true
 
 echo "→ NPM build → public/build"
 "$SCRIPT_DIR/docker-npm.sh" install
@@ -57,4 +57,4 @@ echo "Done — open ${APP_URL:-http://localhost:$PORT} (nginx listens on port $P
 
 Useful commands:
   docker compose logs -f
-  docker compose exec app php artisan tinker"
+  docker compose exec -w /var/www/html app php artisan tinker"

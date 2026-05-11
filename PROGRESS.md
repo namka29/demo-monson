@@ -17,7 +17,7 @@ File này giúp **nhiều agent / phiên làm việc** cùng một codebase: bi�
 
 | Mục | Giá trị |
 |-----|---------|
-| Stack | Laravel 12, Blade, Vite, Filament 5, MySQL |
+| Stack | Laravel 12, Blade, Vite, Filament 5, MariaDB 10.5 (Docker) |
 | Admin | `/admin` |
 | Docker | `compose.yml`, `Dockerfile`, `scripts/docker-setup.sh`, `scripts/docker-npm.sh`, `scripts/docker-npm-dev.sh` |
 | Role đơn giản | Cột `users.role` (`admin` / `editor`), `users.is_active` |
@@ -28,7 +28,7 @@ File này giúp **nhiều agent / phiên làm việc** cùng một codebase: bi�
 
 ### Hạ tầng & dự án
 
-- [x] Docker (nginx + PHP-FPM + app + MySQL), script bootstrap/setup
+- [x] Docker (nginx + PHP-FPM + app + **MariaDB 10.5**), script bootstrap/setup
 - [x] Chạy **npm** trong Docker: `./scripts/docker-npm.sh` (install/build/…), `./scripts/docker-npm-dev.sh` (Vite dev + port 5173); `docker-setup.sh` gọi các script này cho build asset
 - [x] Session / proxy / nginx phục vụ Filament & Livewire khi cần
 - [x] `APP_NAME`, `.env` mẫu phù hợp local / Docker

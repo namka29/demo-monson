@@ -18,13 +18,13 @@ Muc tieu: tranh mat du lieu do thao tac nham khi lam viec local/Docker.
 1. Kiem tra stack:
    - `docker compose ps`
 2. Kiem tra migration:
-   - `docker compose exec app php artisan migrate:status`
+   - `docker compose exec -w /var/www/html app php artisan migrate:status`
 3. Tao backup:
    - `./scripts/db-backup.sh`
 4. Chay migrate an toan:
    - `./scripts/db-safe-migrate.sh`
 5. (Neu can) seed bo sung:
-   - `docker compose exec app php artisan db:seed --force`
+   - `docker compose exec -w /var/www/html app php artisan db:seed --force`
 6. Verify sau cung:
    - Dem so dong cac bang chinh bang tinker hoac dashboard admin
 
@@ -46,7 +46,7 @@ Lenh pha huy du lieu chi duoc phep neu truyen bien moi truong:
 - File backup mac dinh:
   - `storage/backups/db_YYYYmmdd_HHMMSS.sql`
 - Restore thu cong:
-  - `docker compose exec -T mysql sh -lc 'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' < storage/backups/<file>.sql`
+  - `docker compose exec -T mariadb sh -lc 'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' < storage/backups/<file>.sql`
 
 ## 5) Dau hieu canh bao thuong gap
 
@@ -55,7 +55,7 @@ Lenh pha huy du lieu chi duoc phep neu truyen bien moi truong:
 - Bang `users` = 0:
   - Da reset volume hoac wipe DB
 - Sau khi `docker compose down -v`:
-  - Du lieu MySQL local bi xoa theo volume
+  - Du lieu MariaDB local bi xoa theo volume
 
 ## 6) Checklist truoc khi merge
 
