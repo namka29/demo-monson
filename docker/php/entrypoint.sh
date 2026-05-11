@@ -11,6 +11,12 @@ mkdir -p \
 
 cd /var/www/html
 
+# Laravel cần .env; bind mount từ host thường chưa có file này lần đầu.
+if [ ! -f .env ] && [ -f .env.docker ]; then
+  echo "[entrypoint] .env missing — copying from .env.docker …"
+  cp .env.docker .env
+fi
+
 if command -v chown >/dev/null 2>&1; then
   chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 fi

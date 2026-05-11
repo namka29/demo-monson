@@ -16,7 +16,7 @@
 # (tương đương)                  docker compose --profile node run --rm --no-deps node npm install
 # Một dòng (up + build + migrate, khi vendor đã có):
 #   docker compose up -d && docker compose --profile node run --rm node sh -lc "npm install && npm run build" && docker compose exec -w /var/www/html app php artisan migrate --force
-# Copy env cho Docker:          cp .env.docker .env
+# .env: entrypoint tự copy từ .env.docker nếu chưa có; hoặc tay: cp .env.docker .env
 #
 # ⚠️  Container `app` chỉ có PHP-FPM — KHÔNG có Node/npm.
 #     Sai:  docker compose exec app npm install
