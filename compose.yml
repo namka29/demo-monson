@@ -18,15 +18,14 @@
 #   docker compose up -d && docker compose --profile node run --rm node sh -lc "npm install && npm run build" && docker compose exec -w /var/www/html app php artisan migrate --force
 # .env: entrypoint tự copy từ .env.docker nếu chưa có; hoặc tay: cp .env.docker .env
 #
-# ⚠️  Container `app` chỉ có PHP-FPM — KHÔNG có Node/npm.
-#     Sai:  docker compose exec app npm install
-#     Đúng: ./scripts/docker-npm.sh install   hoặc   docker compose --profile node run --rm --no-deps node npm install
+# npm / Vite trong container `app` (sau khi build image): docker compose exec -w /var/www/html app npm run build
+# Hoặc từ host: ./scripts/docker-npm.sh …  |  service `node` (profile) khi stack app chưa chạy / Vite dev (port 5173)
 #
 # All services share the default Compose bridge network — no explicit networks: block (avoids noisy IDE lint in some setups).
 name: tourist_web
 
 services:
-  # PHP-FPM — không bao gồm npm (xem service `node` + profile node).
+  # PHP-FPM + Node 22 (npm / Vite build trong container).
   app:
     build:
       context: .
